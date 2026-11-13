@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0c3537">
+<title>Jaldi Five Tambola</title>
+<meta name="description" content="Tambola for the whole party. Scan the code, get your ticket, and let the host's phone call the numbers and spot the winners.">
+<meta property="og:title" content="Jaldi Five Tambola">
+<meta property="og:description" content="Tap to grab your ticket and join the game.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ashmitcodez.github.io/tambola/">
+<meta property="og:image" content="https://ashmitcodez.github.io/tambola/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f6a623'/%3E%3Ccircle cx='32' cy='32' r='19' fill='%23fff4dc'/%3E%3Ctext x='32' y='41' font-family='Arial' font-weight='700' font-size='26' text-anchor='middle' fill='%23221b16'%3E5%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  /* One committed world: a peacock-teal party table, cream paper tickets, marigold number balls,
+     rani-pink daubers. Phone-first single column; the host screen widens to two columns on tablets. */
+  --bg:#0c3537;
+  --panel:#134446;
+  --panel-2:#1b5658;
+  --paper:#fff4dc;
+  --ink:#221b16;
+  --marigold:#f6a623;
+  --rani:#e2387f;
+  --mint:#62d6b2;
+  --text:#f4efe4;
+  --muted:#a8cdc7;
+  --line:rgba(255,255,255,.13);
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --r-lg:26px;
+  --r-md:18px;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+html,body{margin:0}
+body{
+  min-height:100vh;min-height:100dvh;
+  background:
+    radial-gradient(110% 55% at 0% 0%,rgba(246,166,35,.16),transparent 60%),
+    radial-gradient(90% 45% at 100% 0%,rgba(226,56,127,.15),transparent 60%),
+    var(--bg);
+  background-color:var(--bg);
+  color:var(--text);font-family:var(--body);font-size:16px;line-height:1.45;
+  -webkit-tap-highlight-color:transparent;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--marigold)}
+:focus-visible{outline:3px solid var(--marigold);outline-offset:2px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.08}
+h2{font-size:21px;font-weight:800}
+p{margin:0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.center{text-align:center}
+[hidden]{display:none!important}
+
+/* festive bunting along the top edge */
+.bunting{
+  height:13px;margin-top:env(safe-area-inset-top);
+  background:
+    conic-gradient(from -45deg at 25% 100%,var(--marigold) 0 90deg,transparent 0),
+    conic-gradient(from -45deg at 75% 100%,var(--rani) 0 90deg,transparent 0);
+  background-size:52px 13px;background-repeat:repeat-x;
+}
+
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 56px;display:flex;flex-direction:column;gap:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0 2px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.01em;white-space:nowrap}
+.brand b{color:var(--marigold)}
+.brand.xl{font-size:clamp(48px,15vw,76px);line-height:.95}
+.top-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.h1{font-size:clamp(30px,8.5vw,42px);font-weight:800}
+.lede{color:var(--muted);font-size:17px;max-width:60ch}
+
+.chip{
+  display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 12px;
+  background:rgba(0,0,0,.22);border:1px solid var(--line);font-size:13px;font-weight:600;white-space:nowrap
+}
+button.chip{cursor:pointer}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex:none}
+.dot.ok{background:var(--mint);box-shadow:0 0 0 3px rgba(98,214,178,.22)}
+.dot.warn{background:var(--marigold);animation:blink 1.2s infinite}
+.dot.bad{background:var(--rani)}
+@keyframes blink{50%{opacity:.35}}
+
+.panel{background:var(--panel);border-radius:var(--r-lg);padding:18px;display:flex;flex-direction:column;gap:12px}
+.panel.quiet{background:rgba(255,255,255,.04)}
+details.panel>summary{cursor:pointer;font-family:var(--display);font-weight:800;font-size:19px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.panel>summary::-webkit-details-marker{display:none}
+details.panel>summary::after{content:"+";font-size:24px;color:var(--marigold);line-height:1}
+details.panel[open]>summary::after{content:"\2212"}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;text-align:center;text-decoration:none;
+  border:0;border-radius:999px;padding:13px 20px;font-weight:700;cursor:pointer;
+  background:var(--marigold);color:var(--ink);min-height:48px;
+  transition:transform .12s ease,filter .12s ease;
+}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.big{font-size:18px;min-height:58px;width:100%}
+.btn.pink{background:var(--rani);color:#fff}
+.btn.ghost{background:transparent;color:var(--text);border:1.5px solid var(--line)}
+.btn.small{min-height:40px;padding:9px 15px;font-size:15px}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap}
+.btn-row>.btn{flex:1 1 140px}
+.link-btn{background:none;border:0;color:var(--muted);text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:8px;font-size:15px;align-self:center}
+.link-btn.danger{color:#ff9cc2}
+
+.field{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:15px;border:0;padding:0;margin:0;min-width:0}
+.field>small{font-weight:400;color:var(--muted)}
+.field legend{padding:0;margin-bottom:8px}
+input[type=text],input:not([type]),input[type=number],textarea,select{
+  width:100%;background:rgba(0,0,0,.25);border:1.5px solid var(--line);border-radius:14px;padding:13px 14px;
+  font-size:17px;font-weight:500;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--marigold);outline:none}
+.code-input{text-transform:uppercase;letter-spacing:.3em;font-family:var(--display);font-weight:800;font-size:24px!important}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.err{color:#ffb3cf;font-size:15px;font-weight:600;min-height:0}
+.err:empty{display:none}
+
+.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.toggle{position:relative}
+.toggle input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer}
+.toggle span{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:9px 14px;border:1.5px solid var(--line);font-weight:600;font-size:15px}
+.toggle input:checked+span{background:var(--marigold);color:var(--ink);border-color:var(--marigold)}
+.toggle input:disabled+span{opacity:.75}
+.toggle input:focus-visible+span{outline:3px solid var(--marigold);outline-offset:2px}
+
+/* number balls */
+.ball{
+  --size:172px;width:var(--size);height:var(--size);border-radius:50%;flex:none;
+  background:radial-gradient(circle at 32% 26%,#ffd88a 0 7%,var(--marigold) 38%,#c97a07 100%);
+  display:grid;place-items:center;
+  box-shadow:inset -10px -14px 26px rgba(0,0,0,.24),0 18px 40px rgba(0,0,0,.35);
+}
+.ball span{
+  width:64%;height:64%;border-radius:50%;background:var(--paper);color:var(--ink);display:grid;place-items:center;
+  font-family:var(--display);font-weight:800;font-size:calc(var(--size)*.32);font-variant-numeric:tabular-nums;line-height:1
+}
+.ball.sm{--size:76px}
+.ball.pop{animation:pop .55s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{0%{transform:scale(.6) rotate(-25deg)}100%{transform:none}}
+.recent{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;min-height:34px}
+.rb{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(246,166,35,.18);color:var(--marigold);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+
+.stage{align-items:center;text-align:center;gap:14px;padding-top:22px}
+.stage-meta{width:100%;display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
+.stage-meta b{color:var(--text);letter-spacing:.12em}
+.call{min-height:52px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.call .phrase{font-family:var(--display);font-weight:800;font-size:22px;color:var(--marigold)}
+.call .digits{color:var(--muted);font-size:16px}
+.btn-next{
+  position:relative;overflow:hidden;width:100%;min-height:68px;border:0;border-radius:999px;cursor:pointer;
+  background:var(--rani);color:#fff;font-family:var(--display);font-weight:800;font-size:22px;
+}
+.btn-next:active{transform:scale(.98)}
+.btn-next:disabled{opacity:.45}
+.btn-next .bar{position:absolute;left:0;bottom:0;height:6px;width:0;background:rgba(255,255,255,.75)}
+.btn-next .bar.run{animation:fill var(--dur,8000ms) linear forwards}
+@keyframes fill{to{width:100%}}
+.auto-row{display:flex;gap:10px;width:100%}
+.auto-row>*{flex:1}
+.toggle-btn{border-radius:999px;border:1.5px solid var(--line);background:transparent;padding:11px 14px;font-weight:700;cursor:pointer;min-height:46px}
+.toggle-btn[aria-pressed="true"]{background:var(--mint);color:var(--ink);border-color:var(--mint)}
+.auto-row select{border-radius:999px;min-height:46px;padding:10px 14px;font-size:15px}
+
+/* 1 to 90 board */
+.board{display:grid;grid-template-columns:repeat(10,1fr);gap:4px}
+.board i{
+  aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:clamp(11px,3.2vw,14px);
+  color:rgba(244,239,228,.42);background:rgba(255,255,255,.05);font-variant-numeric:tabular-nums
+}
+.board i.on{background:var(--marigold);color:var(--ink);font-weight:700}
+.board i.last{box-shadow:0 0 0 3px var(--rani)}
+
+/* the paper ticket */
+.ticket{
+  background:var(--paper);color:var(--ink);border-radius:var(--r-md);padding:10px 8px 12px;
+  box-shadow:0 16px 36px rgba(0,0,0,.36);position:relative
+}
+.ticket::before,.ticket::after{
+  content:"";position:absolute;top:31px;width:16px;height:16px;border-radius:50%;background:var(--bg)
+}
+.ticket::before{left:-8px}.ticket::after{right:-8px}
+.ticket-head{
+  display:flex;justify-content:space-between;gap:8px;font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;
+  color:#8b6a3a;padding:0 6px 9px;border-bottom:2px dashed rgba(34,27,22,.2);margin-bottom:9px
+}
+.ticket-head span:last-child{text-align:right}
+.tgrid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px}
+.cell{
+  aspect-ratio:1/1.14;border-radius:8px;display:grid;place-items:center;
+  font-family:var(--display);font-weight:800;font-size:clamp(15px,4.8vw,25px);font-variant-numeric:tabular-nums;line-height:1
+}
+.cell.empty{background:repeating-linear-gradient(135deg,rgba(34,27,22,.08) 0 3px,transparent 3px 7px);border-radius:6px}
+button.cell{border:1.5px solid rgba(34,27,22,.15);background:#fffaf0;color:var(--ink);cursor:pointer;padding:0;touch-action:manipulation}
+.cell.dab{
+  color:#fff;border-color:transparent;
+  background:radial-gradient(circle closest-side,var(--rani) 0 84%,rgba(226,56,127,.35) 88%,transparent 92%),#fffaf0;
+}
+.cell.hl{box-shadow:0 0 0 3px var(--marigold) inset}
+.cell.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+.ticket.mini{padding:7px 6px 8px;box-shadow:none}
+.ticket.mini::before,.ticket.mini::after{display:none}
+.ticket.mini .ticket-head{font-size:10px;padding-bottom:6px;margin-bottom:6px}
+.ticket.mini .cell{font-size:clamp(11px,3.4vw,16px);border-radius:5px}
+
+/* prizes */
+.prizes{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.prizes li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 14px;border-radius:16px;background:rgba(0,0,0,.18)}
+.prizes li div{display:flex;flex-direction:column;min-width:0}
+.prizes li small{color:var(--muted);font-size:13px}
+.prizes .status{font-weight:700;font-size:14px;text-align:right;color:var(--muted);flex:none;max-width:52%}
+.prizes li.won{background:rgba(246,166,35,.14)}
+.prizes li.won .status{color:var(--marigold)}
+.prizes li.mine{background:var(--rani)}
+.prizes li.mine .status,.prizes li.mine small{color:#fff}
+.prizes li.close .status{color:var(--mint)}
+
+/* players */
+.roster{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.roster li{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 10px;border-radius:14px;background:rgba(0,0,0,.2);min-width:0}
+.roster .tno{font-size:12px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;flex:none}
+.roster .pname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.roster .rm{background:none;border:0;color:var(--muted);cursor:pointer;font-size:15px;line-height:1;padding:6px 8px;border-radius:8px;flex:none;min-width:30px}
+.roster .rm.armed{background:var(--rani);color:#fff;font-size:13px;font-weight:700}
+.roster .empty-li{grid-column:1/-1;background:none;color:var(--muted);padding:6px 0}
+.count-pill{display:inline-grid;place-items:center;min-width:30px;height:30px;padding:0 8px;border-radius:999px;background:var(--marigold);color:var(--ink);font-size:15px;vertical-align:middle;margin-left:6px}
+
+/* join card on host */
+.join-card{align-items:center;text-align:center}
+.qr{background:#fff;border-radius:20px;padding:10px;width:min(260px,70vw);aspect-ratio:1;display:grid;place-items:center}
+.qr svg{width:100%;height:100%;display:block}
+.qr.missing{background:rgba(255,255,255,.06);color:var(--muted);font-size:14px;padding:18px}
+.code{font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:.18em;color:var(--marigold);line-height:1}
+.join-url{font-size:15px;color:var(--muted);word-break:break-all}
+
+/* guest */
+.strip{background:var(--panel);border-radius:var(--r-lg);padding:14px 16px;display:flex;align-items:center;gap:14px}
+.strip .grow{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.strip .call{min-height:0;align-items:flex-start;text-align:left}
+.strip .call .phrase{font-size:19px}
+.strip .call .digits{font-size:14px}
+.strip .recent{justify-content:flex-start;min-height:0}
+.strip .rb{width:28px;height:28px;font-size:12px}
+.strip-msg{display:flex;flex-direction:column;gap:4px}
+.strip-msg strong{font-family:var(--display);font-size:20px}
+.t-tools{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.hero{padding:26px 0 6px;display:flex;flex-direction:column;gap:12px}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px;counter-reset:s}
+.steps li{display:flex;gap:12px;align-items:flex-start;color:var(--muted)}
+.steps li::before{counter-increment:s;content:counter(s);flex:none;width:28px;height:28px;border-radius:50%;background:rgba(246,166,35,.18);color:var(--marigold);display:grid;place-items:center;font-weight:800;font-size:14px}
+.steps b{color:var(--text)}
+
+/* overlays */
+.overlay{
+  position:fixed;inset:0;z-index:50;background:rgba(5,22,23,.84);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  display:flex;align-items:center;justify-content:center;padding:16px;overflow:auto
+}
+.win-card,.sheet{
+  position:relative;z-index:2;background:var(--panel-2);border-radius:28px;padding:24px 18px;width:100%;max-width:520px;
+  display:flex;flex-direction:column;gap:12px;text-align:center;margin:auto;box-shadow:0 30px 80px rgba(0,0,0,.5)
+}
+.win-prize{font-size:clamp(36px,11vw,60px);color:var(--marigold);font-weight:800}
+.win-names{font-family:var(--display);font-weight:800;font-size:clamp(30px,9vw,48px);line-height:1.05;overflow-wrap:anywhere}
+.win-card.mine{background:var(--rani)}
+.win-card.mine .win-prize{color:#fff}
+.win-card.mine .eyebrow{color:rgba(255,255,255,.8)}
+.win-tickets{display:flex;flex-direction:column;gap:10px;text-align:left}
+.win-tickets .who{font-weight:700;font-size:14px;margin-bottom:4px}
+canvas.confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:3}
+.copy-area{width:100%;min-height:200px;font-size:14px}
+.sheet .qr{margin:0 auto}
+.sheet-name{font-size:30px}
+
+.toast{
+  position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom));transform:translate(-50%,30px);opacity:0;
+  background:var(--paper);color:var(--ink);padding:12px 18px;border-radius:999px;font-weight:700;z-index:60;
+  transition:all .25s ease;pointer-events:none;max-width:calc(100% - 32px);text-align:center
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+.results{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.results li{display:flex;flex-direction:column;padding:12px 16px;border-radius:16px;background:rgba(0,0,0,.2)}
+.results .pz{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.results strong{font-family:var(--display);font-size:22px;color:var(--marigold)}
+.results li.none strong{color:var(--muted)}
+
+@media (min-width:900px){
+  .wrap.wide{max-width:1120px;display:grid;grid-template-columns:minmax(360px,440px) 1fr;align-items:start}
+  .wrap.wide>.top{grid-column:1/-1}
+  .col{display:flex;flex-direction:column;gap:16px;min-width:0}
+  .ball.big{--size:220px}
+}
+.col{display:flex;flex-direction:column;gap:16px;min-width:0}
+.wrap.wide>.err{grid-column:1/-1}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}
+  .btn-next .bar.run{animation:none;width:0}
+}
+</style>
+</head>
+<body>
+<div id="app"><div class="wrap"><p class="lede" style="padding-top:40px">Loading Tambola…</p></div></div>
+<noscript><p style="padding:20px">Tambola needs JavaScript switched on.</p></noscript>
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script>window.Peer||(window.peerjs&&window.peerjs.Peer)||document.write('<script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"><\/script>')</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>window.qrcode||document.write('<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"><\/script>')</script>
+<script>
+(function(){
+'use strict';
+
+/* ================= constants ================= */
+const APP_PREFIX = 'jaldi5-';
+const MAX_PLAYERS = 60;
+const HOST_KEY = 'j5-host-v2';
+const GUEST_KEY = 'j5-guest-v2';
+const SPEEDS = [5, 8, 12, 20];
+
+/*CORE-START*/
+const PRIZES = [
+  { key: 'early5',  name: 'Early Five',   desc: 'Any 5 numbers on your ticket' },
+  { key: 'top',     name: 'Top Line',     desc: 'Every number in the top row' },
+  { key: 'middle',  name: 'Middle Line',  desc: 'Every number in the middle row' },
+  { key: 'bottom',  name: 'Bottom Line',  desc: 'Every number in the bottom row' },
+  { key: 'corners', name: 'Four Corners', desc: 'First and last of the top and bottom rows' },
+  { key: 'full',    name: 'Full House',   desc: 'All 15 numbers' }
+];
+const PRIZE = Object.fromEntries(PRIZES.map(p => [p.key, p]));
+
+function hashSeed(str) {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) {
+    h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+    h = (h << 13) | (h >>> 19);
+  }
+  h = Math.imul(h ^ (h >>> 16), 2246822507);
+  h = Math.imul(h ^ (h >>> 13), 3266489909);
+  return (h ^= h >>> 16) >>> 0;
+}
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function shuffleWith(arr, rnd) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    const tmp = arr[i]; arr[i] = arr[j]; arr[j] = tmp;
+  }
+  return arr;
+}
+/* A standard housie ticket: 3 rows x 9 columns, 5 numbers per row, column c holds
+   numbers from its band (1-9, 10-19, ..., 80-90), sorted top to bottom. */
+function makeTicket(code, round, no) {
+  const rnd = mulberry32(hashSeed('tambola|' + code + '|' + round + '|' + no));
+  const counts = new Array(9).fill(1);
+  let extra = 6;
+  while (extra > 0) {
+    const c = Math.floor(rnd() * 9);
+    if (counts[c] < 3) { counts[c]++; extra--; }
+  }
+  const order = shuffleWith([0, 1, 2, 3, 4, 5, 6, 7, 8], rnd);
+  order.sort((a, b) => counts[b] - counts[a]);
+  const cap = [5, 5, 5];
+  const rowsFor = new Array(9);
+  for (const c of order) {
+    const rows = shuffleWith([0, 1, 2], rnd);
+    rows.sort((a, b) => cap[b] - cap[a]);
+    const pick = rows.slice(0, counts[c]).sort((a, b) => a - b);
+    pick.forEach(r => cap[r]--);
+    rowsFor[c] = pick;
+  }
+  const grid = [new Array(9).fill(0), new Array(9).fill(0), new Array(9).fill(0)];
+  for (let c = 0; c < 9; c++) {
+    const lo = c === 0 ? 1 : c * 10;
+    const hi = c === 8 ? 90 : c * 10 + 9;
+    const pool = [];
+    for (let n = lo; n <= hi; n++) pool.push(n);
+    shuffleWith(pool, rnd);
+    const nums = pool.slice(0, counts[c]).sort((a, b) => a - b);
+    rowsFor[c].forEach((r, i) => { grid[r][c] = nums[i]; });
+  }
+  return grid;
+}
+function ticketNums(grid) { return grid[0].concat(grid[1], grid[2]).filter(Boolean); }
+function rowNums(grid, r) { return grid[r].filter(Boolean); }
+/* numbers a prize needs; for Early Five, the first five ticket numbers in call order */
+function patternNums(grid, key, calledArr) {
+  if (key === 'early5') {
+    const t = new Set(ticketNums(grid));
+    return (calledArr || []).filter(n => t.has(n)).slice(0, 5);
+  }
+  if (key === 'top') return rowNums(grid, 0);
+  if (key === 'middle') return rowNums(grid, 1);
+  if (key === 'bottom') return rowNums(grid, 2);
+  if (key === 'corners') {
+    const t = rowNums(grid, 0), b = rowNums(grid, 2);
+    return [t[0], t[t.length - 1], b[0], b[b.length - 1]];
+  }
+  return ticketNums(grid);
+}
+function hitCount(grid, set) { let c = 0; for (const n of ticketNums(grid)) if (set.has(n)) c++; return c; }
+function toGo(grid, key, set) {
+  if (key === 'early5') return Math.max(0, 5 - hitCount(grid, set));
+  return patternNums(grid, key).filter(n => !set.has(n)).length;
+}
+function isDone(grid, key, set) { return toGo(grid, key, set) === 0; }
+/* After each call: every enabled, unwon prize goes to all tickets that complete it on this number. */
+function detectWins(state, ticketFor) {
+  const res = [];
+  const sets = new Map(state.roster.map(p => [p.no, new Set(state.called.slice(p.from || 0))]));
+  for (const pz of PRIZES) {
+    const z = state.prizes[pz.key];
+    if (!z || !z.on || z.w.length) continue;
+    const winners = state.roster.filter(p => isDone(ticketFor(p.no), pz.key, sets.get(p.no)));
+    if (winners.length) {
+      z.w = winners.map(p => p.no);
+      const w = { key: pz.key, nos: z.w.slice(), names: winners.map(p => p.name),
+                  at: state.called.length, num: state.called[state.called.length - 1] };
+      state.wins.push(w);
+      res.push(w);
+    }
+  }
+  return res;
+}
+/*CORE-END*/
+
+const CALLS = {
+  1: "Kelly's eye", 2: "One little duck", 3: "Cup of tea", 4: "Knock at the door", 5: "Man alive",
+  6: "Half a dozen", 7: "Lucky seven", 8: "Garden gate", 9: "Doctor's orders", 10: "Cock and hen",
+  11: "Legs eleven", 12: "One dozen", 13: "Unlucky for some", 14: "Valentine's Day", 15: "Young and keen",
+  16: "Sweet sixteen", 17: "Dancing queen", 18: "Coming of age", 19: "Goodbye teens", 20: "One score",
+  21: "Key of the door", 22: "Two little ducks", 23: "Thee and me", 24: "Two dozen", 25: "Duck and dive",
+  26: "Republic Day", 27: "Gateway to heaven", 28: "In a state", 29: "Rise and shine", 30: "Flirty thirty",
+  31: "Get up and run", 32: "Buckle my shoe", 33: "All the threes", 34: "Ask for more", 35: "Jump and jive",
+  36: "Three dozen", 38: "Christmas cake", 39: "All the steps", 40: "Naughty forty", 41: "Time for fun",
+  42: "Quit India", 43: "Down on your knees", 44: "All the fours", 45: "Halfway there", 46: "Up to tricks",
+  47: "Year of independence", 48: "Four dozen", 50: "Half a century", 52: "Pack of cards", 53: "Stuck in the tree",
+  54: "Clean the floor", 55: "All the fives", 57: "Mutiny year", 58: "Make them wait", 60: "Five dozen",
+  61: "Baker's bun", 62: "Tickety-boo", 63: "Tickle me", 65: "Old age pension", 66: "Clickety click",
+  68: "Saving grace", 69: "Either way up", 70: "Three score and ten", 71: "Bang on the drum", 72: "Six dozen",
+  73: "Queen bee", 76: "Trombones", 77: "Two little crutches", 78: "Heaven's gate", 80: "Eight and blank",
+  84: "Seven dozen", 86: "Between the sticks", 88: "Two fat ladies", 89: "Nearly there", 90: "Top of the shop"
+};
+
+/* ================= small utilities ================= */
+const $ = (s, el) => (el || document).querySelector(s);
+const app = document.getElementById('app');
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const LS = {
+  get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+function randInt(n) {
+  try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; }
+  catch (e) { return Math.floor(Math.random() * n); }
+}
+const CODE_ALPHA = 'abcdefghjkmnpqrstuvwxyz23456789';
+function genCode() { let s = ''; for (let i = 0; i < 4; i++) s += CODE_ALPHA[randInt(CODE_ALPHA.length)]; return s; }
+function genPid() { let s = ''; for (let i = 0; i < 16; i++) s += 'abcdefghijklmnopqrstuvwxyz0123456789'[randInt(36)]; return s; }
+function cleanName(v) {
+  if (typeof v !== 'string') return '';
+  return v.replace(/[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁦-⁩]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24);
+}
+function cleanCode(v) { return String(v || '').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 4); }
+const isCode = v => /^[a-z0-9]{4}$/.test(v);
+function joinNames(names) {
+  if (names.length <= 1) return names[0] || '';
+  if (names.length === 2) return names[0] + ' & ' + names[1];
+  return names.slice(0, -1).join(', ') + ' & ' + names[names.length - 1];
+}
+function baseUrl() { return location.origin + location.pathname.replace(/index\.html$/, ''); }
+function joinUrl(code) { return baseUrl() + '?g=' + code; }
+function prettyUrl(u) { return u.replace(/^https?:\/\//, ''); }
+function getPeerCtor() { return window.Peer || (window.peerjs && window.peerjs.Peer) || null; }
+const TCACHE = new Map();
+function ticketOf(code, round, no) {
+  const k = code + '|' + round + '|' + no;
+  let t = TCACHE.get(k);
+  if (!t) { t = makeTicket(code, round, no); TCACHE.set(k, t); }
+  return t;
+}
+
+/* public game state that travels between phones: validate everything */
+function cleanState(d) {
+  if (!d || typeof d !== 'object' || typeof d.code !== 'string' || !isCode(d.code)) return null;
+  const called = Array.isArray(d.called) ? d.called.filter(n => Number.isInteger(n) && n >= 1 && n <= 90).slice(0, 90) : [];
+  const roster = Array.isArray(d.roster) ? d.roster
+    .filter(p => p && Number.isInteger(p.no) && p.no > 0 && p.no < 1000)
+    .map(p => ({ no: p.no, name: cleanName(p.name) || 'Player ' + p.no, from: Number.isInteger(p.from) ? p.from : 0 }))
+    .slice(0, 200) : [];
+  const prizes = {};
+  PRIZES.forEach(p => {
+    const z = d.prizes && d.prizes[p.key];
+    prizes[p.key] = { on: !!(z && z.on), w: z && Array.isArray(z.w) ? z.w.filter(Number.isInteger) : [] };
+  });
+  const wins = Array.isArray(d.wins) ? d.wins
+    .filter(w => w && PRIZE[w.key] && Array.isArray(w.nos) && Number.isInteger(w.at))
+    .map(w => ({ key: w.key, nos: w.nos.filter(Number.isInteger), names: Array.isArray(w.names) ? w.names.map(cleanName) : [], at: w.at, num: Number.isInteger(w.num) ? w.num : 0 })) : [];
+  return {
+    code: d.code,
+    title: cleanName(d.title) || 'Tambola Night',
+    round: Number.isInteger(d.round) && d.round > 0 ? d.round : 1,
+    status: ['lobby', 'live', 'over'].includes(d.status) ? d.status : 'lobby',
+    roster, prizes, called, wins
+  };
+}
+
+/* ================= voice, wake lock, feedback ================= */
+let voice = null;
+function pickVoice() {
+  try {
+    const vs = speechSynthesis.getVoices();
+    voice = vs.find(v => /en[-_]IN/i.test(v.lang)) || vs.find(v => /^en[-_](GB|AU|NZ)/i.test(v.lang)) || vs.find(v => /^en/i.test(v.lang)) || null;
+  } catch (e) {}
+}
+try { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; } catch (e) {}
+function say(text, queue) {
+  try {
+    if (!('speechSynthesis' in window)) return;
+    if (!queue) speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if (voice) { u.voice = voice; u.lang = voice.lang; } else u.lang = 'en-IN';
+    u.rate = 0.92;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function digitsText(n) { return n < 10 ? 'Single number ' + n : Math.floor(n / 10) + ' and ' + (n % 10) + ', ' + n; }
+function callSpeech(n) { return CALLS[n] ? CALLS[n] + '. ' + digitsText(n) : digitsText(n); }
+function captionHTML(n) {
+  if (!n) return '';
+  return (CALLS[n] ? '<span class="phrase">' + esc(CALLS[n]) + '</span>' : '') + '<span class="digits">' + esc(digitsText(n)) + '</span>';
+}
+
+let wakeLock = null;
+async function keepAwake() {
+  try {
+    if ('wakeLock' in navigator && !wakeLock && document.visibilityState === 'visible') {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    }
+  } catch (e) {}
+}
+function buzz(p) { try { if (navigator.vibrate) navigator.vibrate(p); } catch (e) {} }
+
+let toastTimer = null;
+function toast(msg) {
+  let el = document.getElementById('toast');
+  if (!el) { el = document.createElement('div'); el.id = 'toast'; el.className = 'toast'; el.setAttribute('role', 'status'); document.body.appendChild(el); }
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2400);
+}
+function shake(el) { if (!el) return; el.classList.remove('shake'); void el.offsetWidth; el.classList.add('shake'); }
+function armTwoTap(btn, label, run) {
+  if (btn.dataset.armed === '1') { run(); return; }
+  const orig = btn.textContent;
+  btn.dataset.armed = '1'; btn.classList.add('armed'); btn.textContent = label;
+  setTimeout(() => { if (btn.isConnected) { btn.dataset.armed = ''; btn.classList.remove('armed'); btn.textContent = orig; } }, 3500);
+}
+
+function openSheet(html, onAct) {
+  const el = document.createElement('div');
+  el.className = 'overlay';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'true');
+  el.innerHTML = '<div class="sheet">' + html + '</div>';
+  const onKey = e => { if (e.key === 'Escape') close(); };
+  function close() { el.remove(); document.removeEventListener('keydown', onKey); }
+  el.addEventListener('click', e => {
+    if (e.target === el) { close(); return; }
+    const a = e.target.closest('[data-act]');
+    if (!a) return;
+    if (a.dataset.act === 'close') { close(); return; }
+    if (onAct) onAct(a.dataset.act, close, el);
+  });
+  document.addEventListener('keydown', onKey);
+  document.body.appendChild(el);
+  const f = el.querySelector('button,textarea,input');
+  if (f) f.focus();
+  return { el, close };
+}
+function copyText(text, okMsg) {
+  let p = null;
+  try { p = navigator.clipboard && navigator.clipboard.writeText(text); } catch (e) { p = null; }
+  const fallback = () => {
+    const s = openSheet('<h2>Copy this</h2><p class="small muted">Select the text below and copy it.</p><textarea class="copy-area" readonly>' + esc(text) + '</textarea><button class="btn" data-act="close">Done</button>');
+    const ta = s.el.querySelector('textarea'); ta.focus(); ta.select();
+  };
+  if (p && p.then) p.then(() => toast(okMsg || 'Copied'), fallback); else fallback();
+}
+function shareLink(url, text) {
+  if (navigator.share) {
+    navigator.share({ title: 'Jaldi Five Tambola', text, url }).catch(err => {
+      if (err && err.name === 'AbortError') return;
+      copyText(text + ' ' + url, 'Link copied');
+    });
+  } else copyText(text + ' ' + url, 'Link copied');
+}
+
+function qrSvg(text) {
+  if (typeof window.qrcode !== 'function') return null;
+  try {
+    const qr = window.qrcode(0, 'M');
+    qr.addData(text);
+    qr.make();
+    const n = qr.getModuleCount();
+    let d = '';
+    for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) d += 'M' + (c + 2) + ' ' + (r + 2) + 'h1v1h-1z';
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (n + 4) + ' ' + (n + 4) + '" shape-rendering="crispEdges" role="img" aria-label="QR code for ' + esc(text) + '"><path fill="#221b16" d="' + d + '"/></svg>';
+  } catch (e) { return null; }
+}
+function qrBox(text) {
+  const svg = qrSvg(text);
+  return svg ? '<div class="qr">' + svg + '</div>' : '<div class="qr missing">QR code unavailable. Share the link instead.</div>';
+}
+
+function confetti(canvas, amount) {
+  try { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) {}
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const W = canvas.clientWidth, Ht = canvas.clientHeight;
+  canvas.width = W * dpr; canvas.height = Ht * dpr; ctx.scale(dpr, dpr);
+  const colors = ['#f6a623', '#e2387f', '#62d6b2', '#fff4dc', '#ffd88a'];
+  const parts = [];
+  const N = Math.round(170 * amount);
+  for (let i = 0; i < N; i++) {
+    parts.push({ x: W / 2 + (Math.random() - .5) * W * .4, y: Ht * .38, vx: (Math.random() - .5) * 14, vy: -Math.random() * 15 - 4,
+      s: 5 + Math.random() * 7, r: Math.random() * 6.3, vr: (Math.random() - .5) * .35, c: colors[i % colors.length], round: i % 4 === 0 });
+  }
+  const t0 = performance.now(); let last = t0;
+  function frame(t) {
+    if (!canvas.isConnected) return;
+    const dt = Math.min(48, t - last) / 16.7; last = t;
+    ctx.clearRect(0, 0, W, Ht);
+    for (const p of parts) {
+      p.vy += .38 * dt; p.vx *= .992; p.x += p.vx * dt; p.y += p.vy * dt; p.r += p.vr * dt;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r); ctx.fillStyle = p.c;
+      if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.s / 2, 0, 6.3); ctx.fill(); } else ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+      ctx.restore();
+    }
+    if (t - t0 < 4200) requestAnimationFrame(frame); else ctx.clearRect(0, 0, W, Ht);
+  }
+  requestAnimationFrame(frame);
+}
+
+/* ================= shared renderers ================= */
+function ticketHTML(grid, o) {
+  o = o || {};
+  const marks = o.marks || new Set();
+  const hl = o.hl || null;
+  let cells = '';
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 9; c++) {
+    const n = grid[r][c];
+    if (!n) { cells += '<span class="cell empty" aria-hidden="true"></span>'; continue; }
+    const on = marks.has(n);
+    const cls = 'cell' + (on ? ' dab' : '') + (hl && hl.has(n) ? ' hl' : '');
+    cells += o.mini
+      ? '<span class="' + cls + '">' + n + '</span>'
+      : '<button type="button" class="' + cls + '" data-n="' + n + '" aria-pressed="' + on + '">' + n + '</button>';
+  }
+  return '<div class="ticket-head"><span>' + esc(o.left || 'Tambola') + '</span><span>' + esc(o.right || '') + '</span></div><div class="tgrid">' + cells + '</div>';
+}
+function boardHTML(called) {
+  const set = new Set(called);
+  const last = called[called.length - 1];
+  let s = '';
+  for (let n = 1; n <= 90; n++) s += '<i class="' + (set.has(n) ? 'on' : '') + (n === last ? ' last' : '') + '">' + n + '</i>';
+  return s;
+}
+function recentHTML(called, k) {
+  return called.slice(Math.max(0, called.length - 1 - k), Math.max(0, called.length - 1)).reverse()
+    .map(n => '<span class="rb">' + n + '</span>').join('');
+}
+
+/* winner overlays: a queue so several prizes on one number show one after another */
+const OQ = [];
+let overlayOpen = false, overlayEl = null;
+function queueWins(views) { OQ.push(...views); if (!overlayOpen) nextOverlay(); }
+function nextOverlay() {
+  if (overlayEl) { overlayEl.remove(); overlayEl = null; }
+  const v = OQ.shift();
+  if (!v) { overlayOpen = false; overlaysDone(); return; }
+  overlayOpen = true;
+  const mine = v.myNo != null && v.nos.includes(v.myNo);
+  const others = v.nos.map((no, i) => ({ no, name: v.names[i] || ('Ticket ' + no) })).filter(x => x.no !== v.myNo);
+  let sub;
+  if (mine) sub = others.length ? 'Shared with ' + joinNames(others.map(x => x.name)) : 'Take a bow!';
+  else sub = v.nos.length > 1 ? 'They share the prize' : 'Ticket ' + v.nos[0];
+  const tix = v.nos.slice(0, 3).map((no, i) => {
+    const grid = ticketOf(v.code, v.round, no);
+    const slice = v.called.slice(v.froms[i] || 0, v.at);
+    const marks = new Set(slice);
+    const hl = new Set(patternNums(grid, v.key, slice));
+    return '<div><div class="who">' + esc(v.names[i] || 'Ticket ' + no) + ' · ticket ' + no + '</div><div class="ticket mini">' +
+      ticketHTML(grid, { mini: true, marks, hl, left: PRIZE[v.key].name, right: 'Ticket ' + no }) + '</div></div>';
+  }).join('');
+  const el = document.createElement('div');
+  el.className = 'overlay';
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'true');
+  el.setAttribute('aria-label', PRIZE[v.key].name + ' winner');
+  const btnLabel = OQ.length ? 'Next winner' : v.doneLabel;
+  el.innerHTML = '<canvas class="confetti" aria-hidden="true"></canvas><div class="win-card' + (mine ? ' mine' : '') + '">' +
+    '<p class="eyebrow">Number ' + v.num + ' · call ' + v.at + ' of 90</p>' +
+    '<h2 class="win-prize">' + esc(PRIZE[v.key].name) + '</h2>' +
+    '<p class="win-names">' + (mine ? 'You won!' : esc(joinNames(v.names))) + '</p>' +
+    '<p class="muted">' + esc(sub) + '</p>' +
+    '<div class="win-tickets">' + tix + '</div>' +
+    (v.nos.length > 3 ? '<p class="small muted">and ' + (v.nos.length - 3) + ' more</p>' : '') +
+    '<button class="btn big" type="button" id="ovNext">' + esc(btnLabel) + '</button></div>';
+  document.body.appendChild(el);
+  overlayEl = el;
+  el.querySelector('#ovNext').addEventListener('click', nextOverlay);
+  el.querySelector('#ovNext').focus();
+  confetti(el.querySelector('canvas'), mine || v.isHost ? 1 : .55);
+  if (mine) buzz([120, 60, 120, 60, 300]);
+}
+function clearOverlays() { OQ.length = 0; if (overlayEl) overlayEl.remove(); overlayEl = null; overlayOpen = false; }
+function overlaysDone() { if (VIEW === 'host') hostAfterOverlays(); }
+
+/* ================= router ================= */
+let VIEW = 'home';
+function setView(v) { VIEW = v; clearOverlays(); window.scrollTo(0, 0); }
+
+/* ================= HOST ================= */
+let H = null;
+let hostPeer = null;
+const hostConns = new Map(); // pid -> connection
+let hostNet = 'idle';
+let hostIdRetries = 0;
+let autoOn = false, autoTimer = null;
+let soundOn = LS.get('j5-sound') !== false;
+
+function loadHost() {
+  const h = LS.get(HOST_KEY);
+  if (!h || typeof h !== 'object' || !isCode(h.code) || !Array.isArray(h.roster)) return null;
+  return h;
+}
+function newHost(prev) {
+  const prizes = {};
+  PRIZES.forEach(p => { prizes[p.key] = { on: prev ? !!prev.prizes[p.key].on : true, w: [] }; });
+  prizes.full.on = true;
+  return { v: 2, code: genCode(), title: prev ? prev.title : 'Tambola Night', round: 1, status: 'lobby', roster: [], removed: [], nextNo: 1,
+    prizes, called: [], wins: [], speed: prev ? prev.speed : 8, fresh: true, updatedAt: Date.now() };
+}
+function publicState() {
+  return { code: H.code, title: H.title, round: H.round, status: H.status,
+    roster: H.roster.map(p => ({ no: p.no, name: p.name, from: p.from })), prizes: H.prizes, called: H.called, wins: H.wins };
+}
+let bcastTimer = null;
+function hostSave(soon) {
+  H.updatedAt = Date.now();
+  LS.set(HOST_KEY, H);
+  clearTimeout(bcastTimer);
+  if (soon) bcastTimer = setTimeout(hostBroadcast, 300);
+  else hostBroadcast();
+}
+function sendTo(c, m) { try { if (c && c.open) c.send(m); } catch (e) {} }
+function hostBroadcast() { const m = { t: 'state', s: publicState() }; hostConns.forEach(c => sendTo(c, m)); }
+function hostTicket(no) { return ticketOf(H.code, H.round, no); }
+
+function hostStartPeer() {
+  if (hostPeer && !hostPeer.destroyed) return;
+  const P = getPeerCtor();
+  if (!P) { hostNet = 'nolib'; renderHostNet(); return; }
+  hostNet = 'connecting'; renderHostNet();
+  let peer;
+  try { peer = new P(APP_PREFIX + H.code, { debug: 0 }); } catch (e) { hostNet = 'error'; renderHostNet(); return; }
+  hostPeer = peer;
+  peer.on('open', () => { hostNet = 'ready'; hostIdRetries = 0; renderHostNet(); });
+  peer.on('connection', conn => hostAccept(conn));
+  peer.on('disconnected', () => {
+    if (peer.destroyed || hostPeer !== peer) return;
+    hostNet = 'reconnecting'; renderHostNet();
+    setTimeout(() => { try { if (!peer.destroyed && peer.disconnected) peer.reconnect(); } catch (e) {} }, 1500);
+  });
+  peer.on('error', err => {
+    const type = err && err.type;
+    if (hostPeer !== peer) return;
+    if (type === 'unavailable-id') {
+      try { peer.destroy(); } catch (e) {}
+      hostPeer = null;
+      if (H.fresh && !H.roster.length) { H.code = genCode(); hostSave(); renderHost(); hostStartPeer(); return; }
+      hostNet = 'reopening'; renderHostNet();
+      if (++hostIdRetries <= 30) setTimeout(() => { if (H && VIEW === 'host') hostStartPeer(); }, 3000);
+      else { hostNet = 'error'; renderHostNet(); }
+      return;
+    }
+    if (type === 'peer-unavailable') return;
+    if (type === 'browser-incompatible') { hostNet = 'incompatible'; renderHostNet(); return; }
+    hostNet = 'reconnecting'; renderHostNet();
+    setTimeout(() => {
+      if (hostPeer !== peer || !H || VIEW !== 'host') return;
+      if (peer.destroyed) { hostPeer = null; hostStartPeer(); }
+      else { try { if (peer.disconnected) peer.reconnect(); } catch (e) {} }
+    }, 3000);
+  });
+}
+function hostStopPeer() {
+  hostConns.forEach(c => { try { c.close(); } catch (e) {} });
+  hostConns.clear();
+  if (hostPeer) { try { hostPeer.destroy(); } catch (e) {} }
+  hostPeer = null; hostNet = 'idle';
+}
+function hostAccept(conn) {
+  let pid = null;
+  conn.on('data', msg => {
+    if (!H || !msg || typeof msg !== 'object') return;
+    if (msg.t !== 'hello') return;
+    const p = typeof msg.pid === 'string' && /^[a-z0-9]{8,24}$/.test(msg.pid) ? msg.pid : null;
+    const name = cleanName(msg.name);
+    if (!p) { sendTo(conn, { t: 'bad', msg: 'Something went wrong. Reload the page and try again.' }); return; }
+    if ((H.removed || []).includes(p)) { sendTo(conn, { t: 'removed' }); return; }
+    let r = H.roster.find(x => x.pid === p);
+    if (!r) {
+      if (!name) { sendTo(conn, { t: 'bad', msg: 'Type your name to join.' }); return; }
+      if (H.roster.length >= MAX_PLAYERS) { sendTo(conn, { t: 'full' }); return; }
+      if (H.status === 'over') { sendTo(conn, { t: 'bad', msg: 'This game has finished. Ask the host to start another round, then try again.' }); return; }
+      r = { no: H.nextNo++, name, pid: p, from: H.status === 'live' ? H.called.length : 0 };
+      H.roster.push(r);
+      H.fresh = false;
+      toast(name + ' joined');
+    } else if (name && name !== r.name && H.status === 'lobby') {
+      r.name = name;
+    }
+    pid = p;
+    const old = hostConns.get(p);
+    hostConns.set(p, conn);
+    if (old && old !== conn) { try { old.close(); } catch (e) {} }
+    sendTo(conn, { t: 'welcome', no: r.no, s: publicState() });
+    hostSave(true);
+    renderHostPlayers();
+  });
+  conn.on('close', () => { if (pid && hostConns.get(pid) === conn) { hostConns.delete(pid); renderHostPlayers(); } });
+  conn.on('error', () => {});
+}
+
+function netLabel(state) {
+  return ({
+    idle: ['', 'Offline'], connecting: ['warn', 'Opening game…'], ready: ['ok', 'Open for players'],
+    reconnecting: ['warn', 'Reconnecting…'], reopening: ['warn', 'Reopening game…'], error: ['bad', 'Can’t reach game server'],
+    nolib: ['bad', 'Game server didn’t load'], incompatible: ['bad', 'This browser can’t host']
+  })[state] || ['', state];
+}
+function renderHostNet() {
+  const el = $('#netChip');
+  if (!el) return;
+  const [cls, txt] = netLabel(hostNet);
+  el.innerHTML = '<span class="dot ' + cls + '"></span>' + esc(txt);
+  const help = $('#netHelp');
+  if (help) {
+    help.textContent = hostNet === 'error' || hostNet === 'nolib'
+      ? 'Check this phone’s internet, then reload the page. Your game is saved on this phone.'
+      : hostNet === 'incompatible' ? 'Open this page in Chrome or Safari to host.' : '';
+  }
+}
+function hostTopHTML() {
+  return '<header class="top"><div class="brand">Jaldi <b>Five</b></div><div class="top-right">' +
+    '<span class="chip" id="netChip"></span>' +
+    '<button class="chip" type="button" id="soundBtn" aria-pressed="' + soundOn + '">' + (soundOn ? 'Voice on' : 'Voice off') + '</button></div></header>' +
+    '<p class="err" id="netHelp"></p>';
+}
+function bindHostTop() {
+  renderHostNet();
+  $('#soundBtn').addEventListener('click', e => {
+    soundOn = !soundOn; LS.set('j5-sound', soundOn);
+    e.currentTarget.setAttribute('aria-pressed', soundOn);
+    e.currentTarget.textContent = soundOn ? 'Voice on' : 'Voice off';
+    if (soundOn) say('Voice on');
+    else try { speechSynthesis.cancel(); } catch (err) {}
+  });
+}
+
+function startHosting(resume) {
+  if (!resume) {
+    const prev = loadHost();
+    H = newHost(prev && prev.prizes ? prev : null);
+    LS.set(HOST_KEY, H);
+  }
+  setView('host');
+  history.replaceState(null, '', baseUrl());
+  hostStartPeer();
+  renderHost();
+}
+function renderHost() {
+  stopAuto();
+  if (!H) { renderHome(); return; }
+  if (H.status === 'lobby') hostLobby();
+  else if (H.status === 'live') hostLive();
+  else hostResults();
+}
+
+function rosterHTML(allowRemove) {
+  if (!H.roster.length) return '<li class="empty-li">Nobody yet. Ask everyone to scan the code or open the link.</li>';
+  return H.roster.map(p => {
+    const online = hostConns.has(p.pid);
+    return '<li><span class="dot ' + (online ? 'ok' : '') + '" title="' + (online ? 'Connected' : 'Not connected right now') + '"></span>' +
+      '<span class="pname">' + esc(p.name) + '</span><span class="tno">#' + p.no + '</span>' +
+      (allowRemove ? '<button type="button" class="rm" data-rm="' + p.no + '" aria-label="Remove ' + esc(p.name) + '">✕</button>' : '') + '</li>';
+  }).join('');
+}
+function renderHostPlayers() {
+  const list = $('#roster');
+  if (!list || !H) return;
+  list.innerHTML = rosterHTML(true);
+  const c = $('#pCount'); if (c) c.textContent = H.roster.length;
+  const online = $('#pOnline'); if (online) online.textContent = hostConns.size + ' connected';
+  const start = $('#startBtn'); if (start) start.disabled = !H.roster.length;
+}
+function bindRoster() {
+  const list = $('#roster');
+  if (!list) return;
+  list.addEventListener('click', e => {
+    const b = e.target.closest('[data-rm]');
+    if (!b) return;
+    armTwoTap(b, 'Remove?', () => {
+      const no = +b.dataset.rm;
+      const p = H.roster.find(x => x.no === no);
+      if (!p) return;
+      H.roster = H.roster.filter(x => x.no !== no);
+      H.removed = (H.removed || []).concat(p.pid);
+      const c = hostConns.get(p.pid);
+      if (c) { sendTo(c, { t: 'removed' }); setTimeout(() => { try { c.close(); } catch (err) {} }, 300); hostConns.delete(p.pid); }
+      hostSave();
+      renderHostPlayers();
+      toast(p.name + ' removed');
+    });
+  });
+}
+
+function hostLobby() {
+  const url = joinUrl(H.code);
+  app.innerHTML = '<div class="bunting" aria-hidden="true"></div><main class="wrap">' + hostTopHTML() +
+    '<section class="panel join-card">' +
+      '<p class="eyebrow">' + esc(H.title) + (H.round > 1 ? ' · Round ' + H.round : '') + '</p>' +
+      '<h1 class="h1">Scan to join</h1>' +
+      qrBox(url) +
+      '<div><p class="eyebrow">or go to</p><p class="join-url">' + esc(prettyUrl(baseUrl())) + '</p><p class="eyebrow" style="margin-top:6px">and enter code</p><p class="code">' + H.code.toUpperCase() + '</p></div>' +
+      '<div class="btn-row" style="width:100%"><button class="btn" type="button" id="shareBtn">Share link</button><button class="btn ghost" type="button" id="copyBtn">Copy link</button></div>' +
+    '</section>' +
+    '<section class="panel"><div class="row-between"><h2>Players <span class="count-pill" id="pCount">' + H.roster.length + '</span></h2><span class="small muted" id="pOnline"></span></div>' +
+      '<ul class="roster" id="roster"></ul></section>' +
+    '<section class="panel"><h2>Game settings</h2>' +
+      '<label class="field"><span>Game name</span><input id="gTitle" maxlength="24" value="' + esc(H.title) + '"></label>' +
+      '<fieldset class="field"><legend>Prizes</legend><div class="toggles">' +
+        PRIZES.map(p => '<label class="toggle"><input type="checkbox" data-pz="' + p.key + '"' + (H.prizes[p.key].on ? ' checked' : '') + (p.key === 'full' ? ' disabled' : '') + '><span>' + p.name + '</span></label>').join('') +
+      '</div></fieldset></section>' +
+    '<section class="panel"><h2>Ready?</h2><p class="small muted">Keep this phone on the table with the volume up and the screen on. It calls every number out loud and announces the winners.</p>' +
+      '<button class="btn big pink" type="button" id="startBtn"' + (H.roster.length ? '' : ' disabled') + '>Start the game</button></section>' +
+    '<button class="link-btn danger" type="button" id="cancelBtn">Cancel this game</button>' +
+    '</main>';
+  bindHostTop();
+  renderHostPlayers();
+  bindRoster();
+  $('#shareBtn').addEventListener('click', () => shareLink(url, 'Join my Tambola game! Code ' + H.code.toUpperCase() + ':'));
+  $('#copyBtn').addEventListener('click', () => copyText(url, 'Link copied'));
+  $('#gTitle').addEventListener('change', e => { H.title = cleanName(e.target.value) || 'Tambola Night'; e.target.value = H.title; hostSave(); });
+  app.querySelectorAll('[data-pz]').forEach(cb => cb.addEventListener('change', () => { H.prizes[cb.dataset.pz].on = cb.checked || cb.dataset.pz === 'full'; hostSave(); }));
+  $('#startBtn').addEventListener('click', () => {
+    if (!H.roster.length) return;
+    const t = $('#gTitle'); if (t) H.title = cleanName(t.value) || 'Tambola Night';
+    H.status = 'live';
+    hostSave();
+    keepAwake();
+    if (soundOn) say("Let's play Tambola! Eyes down.");
+    renderHost();
+  });
+  $('#cancelBtn').addEventListener('click', e => armTwoTap(e.currentTarget, 'Tap again to cancel the game', endHosting));
+}
+
+function hostLive() {
+  autoOn = false;
+  app.innerHTML = '<div class="bunting" aria-hidden="true"></div><main class="wrap wide">' + hostTopHTML() +
+    '<div class="col">' +
+      '<section class="panel stage">' +
+        '<div class="stage-meta"><span>Code <b>' + H.code.toUpperCase() + '</b></span><span id="count"></span></div>' +
+        '<div class="ball big" id="ball"><span id="ballNum">?</span></div>' +
+        '<p class="call" id="callText" aria-live="polite"></p>' +
+        '<div class="recent" id="recent" aria-label="Previous numbers"></div>' +
+        '<button class="btn-next" type="button" id="nextBtn"><span>Next number</span><i class="bar" id="autoBar"></i></button>' +
+        '<div class="auto-row"><button class="toggle-btn" type="button" id="autoBtn" aria-pressed="false">Auto-call</button>' +
+          '<label class="sr" for="speed">Time between numbers</label><select id="speed">' +
+          SPEEDS.map(s => '<option value="' + s + '"' + (H.speed === s ? ' selected' : '') + '>every ' + s + ' sec</option>').join('') + '</select></div>' +
+      '</section>' +
+    '</div>' +
+    '<div class="col">' +
+      '<section class="panel" id="prizePanel"></section>' +
+      '<section class="panel"><h2>Board</h2><div class="board" id="board"></div></section>' +
+      '<details class="panel"><summary><span>Players (<span id="pCount">' + H.roster.length + '</span>)</span></summary>' +
+        '<p class="small muted"><span id="pOnline"></span>. Latecomers can still join with code ' + H.code.toUpperCase() + '; only numbers called after they join count for them.</p>' +
+        '<ul class="roster" id="roster"></ul>' +
+        '<button class="btn ghost small" type="button" id="joinQrBtn">Show join QR code</button></details>' +
+      '<button class="link-btn danger" type="button" id="endBtn">End the game now</button>' +
+    '</div></main>';
+  bindHostTop();
+  renderHostPlayers();
+  bindRoster();
+  updateHostLive(false);
+  $('#nextBtn').addEventListener('click', () => { keepAwake(); callNext(); });
+  $('#autoBtn').addEventListener('click', e => {
+    autoOn = !autoOn;
+    e.currentTarget.setAttribute('aria-pressed', autoOn);
+    e.currentTarget.textContent = autoOn ? 'Auto-call on' : 'Auto-call';
+    keepAwake();
+    if (autoOn) callNext(); else stopAuto();
+  });
+  $('#speed').addEventListener('change', e => { H.speed = +e.target.value; LS.set(HOST_KEY, H); if (autoOn) scheduleAuto(); });
+  $('#joinQrBtn').addEventListener('click', () => {
+    const url = joinUrl(H.code);
+    openSheet('<p class="eyebrow">Join ' + esc(H.title) + '</p>' + qrBox(url) + '<p class="code">' + H.code.toUpperCase() + '</p><p class="join-url">' + esc(prettyUrl(url)) + '</p><button class="btn" data-act="close">Done</button>');
+  });
+  $('#endBtn').addEventListener('click', e => armTwoTap(e.currentTarget, 'Tap again to end the game', () => { stopAuto(); H.status = 'over'; hostSave(); renderHost(); }));
+}
+function updateHostLive(pop) {
+  if (!$('#ballNum')) return;
+  const last = H.called[H.called.length - 1];
+  $('#ballNum').textContent = last || '?';
+  $('#callText').innerHTML = last ? captionHTML(last) : '<span class="digits">Tap Next number to call the first one</span>';
+  $('#recent').innerHTML = recentHTML(H.called, 6);
+  $('#count').textContent = H.called.length + ' of 90 called';
+  $('#board').innerHTML = boardHTML(H.called);
+  $('#prizePanel').innerHTML = '<h2>Prizes</h2>' + prizeListHTML(H, null, null);
+  if (pop) { const b = $('#ball'); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
+}
+function prizeListHTML(state, myNo, mySet) {
+  const rows = PRIZES.filter(p => state.prizes[p.key] && state.prizes[p.key].on).map(p => {
+    const z = state.prizes[p.key];
+    const win = state.wins.find(w => w.key === p.key);
+    let status, cls = '';
+    if (z.w.length) {
+      const names = win ? win.names : z.w.map(no => 'Ticket ' + no);
+      if (myNo != null && z.w.includes(myNo)) { cls = 'won mine'; status = z.w.length > 1 ? 'You won (shared)' : 'You won!'; }
+      else { cls = 'won'; status = 'Won by ' + joinNames(names); }
+    } else if (mySet && state.status !== 'lobby') {
+      const left = toGo(ticketOf(state.code, state.round, myNo), p.key, mySet);
+      status = left === 0 ? 'Complete!' : left + ' to go';
+      if (left <= 1) cls = 'close';
+    } else status = 'Up for grabs';
+    return '<li class="' + cls + '"><div><strong>' + p.name + '</strong><small>' + p.desc + '</small></div><span class="status">' + esc(status) + '</span></li>';
+  });
+  return '<ul class="prizes">' + rows.join('') + '</ul>';
+}
+
+function callNext() {
+  if (!H || H.status !== 'live' || overlayOpen) return;
+  stopAuto();
+  const set = new Set(H.called);
+  const remaining = [];
+  for (let n = 1; n <= 90; n++) if (!set.has(n)) remaining.push(n);
+  if (!remaining.length) { H.status = 'over'; hostSave(); renderHost(); return; }
+  const n = remaining[randInt(remaining.length)];
+  H.called.push(n);
+  const wins = detectWins(H, hostTicket);
+  if (H.prizes.full.w.length || H.called.length >= 90) { H.status = 'over'; autoOn = false; }
+  hostSave();
+  if (soundOn) say(callSpeech(n));
+  updateHostLive(true);
+  if (wins.length) {
+    if (soundOn) wins.forEach(w => say(PRIZE[w.key].name + ' goes to ' + joinNames(w.names) + '!', true));
+    queueWins(wins.map(w => winView(publicState(), w, null, true)));
+  } else if (H.status === 'over') renderHost();
+  else scheduleAuto();
+}
+function winView(state, w, myNo, isHost) {
+  const froms = w.nos.map(no => { const p = state.roster.find(x => x.no === no); return p ? p.from : 0; });
+  let doneLabel = isHost ? (H && H.status === 'over' ? 'See the results' : 'Keep playing') : 'Back to my ticket';
+  return { key: w.key, nos: w.nos, names: w.names, num: w.num, at: w.at, code: state.code, round: state.round,
+    called: state.called.slice(), froms, myNo, isHost, doneLabel };
+}
+function hostAfterOverlays() {
+  if (!H) return;
+  if (H.status === 'over') renderHost();
+  else scheduleAuto();
+}
+function stopAuto() {
+  clearTimeout(autoTimer); autoTimer = null;
+  const bar = $('#autoBar'); if (bar) bar.classList.remove('run');
+}
+function scheduleAuto() {
+  stopAuto();
+  if (!autoOn || !H || H.status !== 'live' || overlayOpen || VIEW !== 'host') return;
+  const ms = H.speed * 1000;
+  const bar = $('#autoBar');
+  if (bar) { bar.style.setProperty('--dur', ms + 'ms'); void bar.offsetWidth; bar.classList.add('run'); }
+  autoTimer = setTimeout(() => { autoTimer = null; callNext(); }, ms);
+}
+
+function hostResults() {
+  const fh = H.wins.find(w => w.key === 'full');
+  app.innerHTML = '<div class="bunting" aria-hidden="true"></div><main class="wrap">' + hostTopHTML() +
+    '<section class="panel"><p class="eyebrow">' + esc(H.title) + ' · code ' + H.code.toUpperCase() + (H.round > 1 ? ' · round ' + H.round : '') + '</p>' +
+      '<h1 class="h1">' + (fh ? 'Full House! That’s a wrap' : 'Game over') + '</h1>' +
+      '<p class="muted">' + H.called.length + ' numbers called · ' + H.roster.length + ' players</p>' +
+      '<ul class="results">' + PRIZES.filter(p => H.prizes[p.key].on).map(p => {
+        const w = H.wins.find(x => x.key === p.key);
+        return '<li class="' + (w ? '' : 'none') + '"><span class="pz">' + p.name + '</span><strong>' + (w ? esc(joinNames(w.names)) : 'Not won') + '</strong></li>';
+      }).join('') + '</ul></section>' +
+    '<button class="btn big pink" type="button" id="againBtn">Play another round</button>' +
+    '<p class="small muted center">Everyone stays connected and gets a fresh ticket. Same code, no rescanning.</p>' +
+    '<button class="link-btn" type="button" id="freshBtn">Finish and start a brand new game</button>' +
+    '</main>';
+  bindHostTop();
+  $('#againBtn').addEventListener('click', () => {
+    H.round += 1; H.status = 'lobby'; H.called = []; H.wins = [];
+    PRIZES.forEach(p => { H.prizes[p.key].w = []; });
+    H.roster.forEach(p => { p.from = 0; });
+    hostSave();
+    renderHost();
+  });
+  $('#freshBtn').addEventListener('click', e => armTwoTap(e.currentTarget, 'Tap again: this disconnects everyone', endHosting));
+}
+function endHosting() {
+  stopAuto(); autoOn = false;
+  hostConns.forEach(c => sendTo(c, { t: 'ended' }));
+  setTimeout(() => {
+    hostStopPeer();
+    LS.del(HOST_KEY);
+    H = null;
+    setView('home');
+    renderHome();
+  }, 400);
+}
+window.addEventListener('beforeunload', e => {
+  if (VIEW === 'host' && H && H.status === 'live') { e.preventDefault(); e.returnValue = ''; }
+});
+
+/* ================= GUEST ================= */
+let G = null;          // {code, pid, name, no, s, net, joined, auto, marks}
+let gPeer = null, gConn = null, gTimer = null, gAttempts = 0, gConnecting = false;
+
+function guestInit(code) {
+  const saved = LS.get(GUEST_KEY);
+  const pid = saved && typeof saved.pid === 'string' && /^[a-z0-9]{16}$/.test(saved.pid) ? saved.pid : genPid();
+  G = { code, pid, name: saved && saved.name ? cleanName(saved.name) : '', no: null, s: null, net: 'idle', joined: false,
+    auto: LS.get('j5-autodab') === true, marks: new Set(), seenWins: null, lastCount: null, markKey: '', err: '' };
+  if (saved && saved.code === code && saved.joined && G.name) {
+    G.joined = true;
+    G.no = Number.isInteger(saved.no) ? saved.no : null;
+  }
+}
+function guestPersist() { LS.set(GUEST_KEY, { code: G.code, pid: G.pid, name: G.name, joined: G.joined, no: G.no }); }
+function guestConnect() {
+  clearTimeout(gTimer);
+  if (!G || ['removed', 'ended', 'full'].includes(G.net)) return;
+  if (gConn && gConn.open) return;
+  const P = getPeerCtor();
+  if (!P) { G.net = 'nolib'; guestRender(); return; }
+  if (!G.s) G.net = 'connecting';
+  else G.net = 'reconnecting';
+  guestRenderNet();
+  const start = () => {
+    if (gConn && gConn.open) return;
+    if (gConnecting) return;
+    gConnecting = true;
+    let conn;
+    try { conn = gPeer.connect(APP_PREFIX + G.code, { reliable: true }); } catch (e) { gConnecting = false; guestRetry(); return; }
+    gConn = conn;
+    const to = setTimeout(() => { if (!conn.open) { gConnecting = false; try { conn.close(); } catch (e) {} if (gConn === conn) gConn = null; guestRetry(); } }, 15000);
+    conn.on('open', () => {
+      clearTimeout(to); gConnecting = false; gAttempts = 0;
+      conn.send({ t: 'hello', v: 2, pid: G.pid, name: G.name });
+    });
+    conn.on('data', guestOnData);
+    conn.on('close', () => {
+      clearTimeout(to); gConnecting = false;
+      if (gConn !== conn) return;
+      gConn = null;
+      if (G && !['removed', 'ended', 'full', 'bad'].includes(G.net)) { G.net = 'lost'; guestRenderNet(); guestRetry(); }
+    });
+    conn.on('error', () => {});
+  };
+  if (gPeer && !gPeer.destroyed && gPeer.open) { start(); return; }
+  if (gPeer) { try { gPeer.destroy(); } catch (e) {} }
+  let peer;
+  try { peer = new P({ debug: 0 }); } catch (e) { G.net = 'error'; guestRender(); return; }
+  gPeer = peer;
+  peer.on('open', () => { if (gPeer === peer) start(); });
+  peer.on('disconnected', () => { setTimeout(() => { try { if (!peer.destroyed && peer.disconnected) peer.reconnect(); } catch (e) {} }, 1500); });
+  peer.on('error', err => {
+    if (gPeer !== peer || !G) return;
+    gConnecting = false;
+    const t = err && err.type;
+    if (t === 'browser-incompatible') { G.net = 'incompatible'; guestRender(); return; }
+    if (t === 'peer-unavailable') {
+      if (gConn && !gConn.open) { try { gConn.close(); } catch (e) {} gConn = null; }
+      G.net = G.s ? 'hostgone' : 'notfound';
+    } else G.net = G.s ? 'lost' : 'error';
+    guestRender();
+    guestRetry();
+  });
+}
+function guestRetry() {
+  clearTimeout(gTimer);
+  if (!G || ['removed', 'ended', 'full', 'bad'].includes(G.net)) return;
+  if (!G.joined && G.net === 'notfound' && gAttempts >= 2) return; // stop hammering a wrong code before joining
+  const delay = Math.min(12000, 2000 * Math.pow(1.4, gAttempts++));
+  gTimer = setTimeout(() => {
+    if (document.visibilityState === 'visible') guestConnect(); else guestRetry();
+  }, delay);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  if (VIEW === 'guest' && G && G.joined && !(gConn && gConn.open)) { gAttempts = 0; guestConnect(); }
+  if (VIEW === 'host' && H && H.status === 'live') keepAwake();
+  if (VIEW === 'host' && H && (!hostPeer || hostPeer.destroyed)) hostStartPeer();
+});
+
+function guestOnData(msg) {
+  if (!G || !msg || typeof msg !== 'object') return;
+  if (msg.t === 'welcome') {
+    if (!Number.isInteger(msg.no)) return;
+    G.no = msg.no; G.joined = true; G.net = 'ok'; G.err = '';
+    guestPersist();
+    keepAwake();
+    guestSetState(msg.s);
+    return;
+  }
+  if (msg.t === 'state') { guestSetState(msg.s); return; }
+  if (msg.t === 'bad') {
+    G.net = 'bad'; G.err = typeof msg.msg === 'string' ? msg.msg.slice(0, 160) : 'The host could not add you.';
+    G.joined = false; guestPersist(); guestRender(); return;
+  }
+  if (msg.t === 'full') { G.net = 'full'; G.joined = false; guestPersist(); guestRender(); return; }
+  if (msg.t === 'removed') { G.net = 'removed'; LS.del(GUEST_KEY); guestRender(); return; }
+  if (msg.t === 'ended') { G.net = 'ended'; LS.del(GUEST_KEY); clearOverlays(); guestRender(); }
+}
+function guestMe() { return G && G.s ? G.s.roster.find(p => p.no === G.no) || null : null; }
+function guestCalledForMe() { const me = guestMe(); return G.s ? G.s.called.slice(me ? me.from : 0) : []; }
+function guestSetState(raw) {
+  const s = cleanState(raw);
+  if (!s || s.code !== G.code) return;
+  const prev = G.s;
+  G.s = s;
+  G.net = 'ok';
+  const key = 'j5m:' + s.code + ':' + s.round + ':' + G.no;
+  if (key !== G.markKey) {
+    G.markKey = key;
+    G.marks = new Set((LS.get(key) || []).filter(n => Number.isInteger(n)));
+    G.seenWins = null; G.lastCount = null;
+  }
+  // new winners since we last looked (never replay old ones after a reconnect)
+  if (G.seenWins === null || !prev || prev.round !== s.round) G.seenWins = s.wins.length;
+  else if (s.wins.length > G.seenWins) {
+    const fresh = s.wins.slice(G.seenWins);
+    G.seenWins = s.wins.length;
+    queueWins(fresh.map(w => winView(s, w, G.no, false)));
+  } else if (s.wins.length < G.seenWins) G.seenWins = s.wins.length;
+  const isNew = G.lastCount !== null && s.called.length > G.lastCount;
+  G.lastCount = s.called.length;
+  if (isNew) buzz(25);
+  guestRender(isNew);
+}
+
+function guestNetHTML() {
+  const map = { ok: ['ok', 'Connected'], connecting: ['warn', 'Connecting…'], reconnecting: ['warn', 'Reconnecting…'],
+    lost: ['warn', 'Reconnecting…'], hostgone: ['warn', 'Waiting for host…'], notfound: ['bad', 'Game not found'],
+    error: ['bad', 'Connection problem'], nolib: ['bad', 'Couldn’t load'], idle: ['', 'Not connected'] };
+  const [cls, txt] = map[G.net] || ['', ''];
+  return '<span class="dot ' + cls + '"></span>' + esc(txt);
+}
+function guestRenderNet() { const el = $('#gNet'); if (el) el.innerHTML = guestNetHTML(); }
+
+function guestRender(pop) {
+  if (VIEW !== 'guest' || !G) return;
+  if (['removed', 'ended', 'full', 'incompatible', 'nolib'].includes(G.net)) { guestEndScreen(); return; }
+  if (!G.joined || !G.s) { guestJoinScreen(); return; }
+  if (!$('#ticket')) guestTicketShell();
+  guestUpdate(pop);
+}
+function guestEndScreen() {
+  const msgs = {
+    removed: ['You’ve been removed', 'The host took you off this game. If that was a mistake, ask them to let you back in.'],
+    ended: ['The host closed the game', 'Thanks for playing! If there’s another game, scan the new code.'],
+    full: ['This game is full', 'The host already has ' + MAX_PLAYERS + ' players. Ask them to start another game.'],
+    incompatible: ['This browser can’t join', 'Open the link in Chrome or Safari instead.'],
+    nolib: ['The game didn’t load', 'Check your internet connection and reload the page.']
+  };
+  const [h, p] = msgs[G.net];
+  app.innerHTML = '<div class="bunting" aria-hidden="true"></div><main class="wrap"><header class="top"><div class="brand">Jaldi <b>Five</b></div></header>' +
+    '<section class="panel"><h1 class="h1">' + esc(h) + '</h1><p class="lede">' + esc(p) + '</p>' +
+    '<a class="btn" href="' + esc(baseUrl()) + '">Back to start</a></section></main>';
+}
+function guestJoinScreen() {
+  const busy = !!G.name && ['connecting', 'reconnecting', 'lost', 'hostgone'].includes(G.net);
+  const existing = $('#joinForm');
+  if (existing && existing.dataset.code === G.code) {
+    // update status only, keep what the guest is typing
+    $('#gStatus').innerHTML = joinStatusHTML();
+    $('#joinBtn').disabled = busy;
+    $('#joinBtn').textContent = busy ? 'Joining…' : 'Join the game';
+    return;
+  }
+  app.innerHTML = '<div class="bunting" aria-hidden="true"></div><main class="wrap"><header class="top"><div class="brand">Jaldi <b>Five</b></div><span class="chip" id="gNet">' + guestNetHTML() + '</span></header>' +
+    '<section class="hero"><p class="eyebrow">Tambola · game ' + G.code.toUpperCase() + '</p><h1 class="h1">Grab your ticket</h1>' +
+    '<p class="lede">Type your name and you’re in. The host’s phone calls the numbers and spots the winners.</p></section>' +
+    '<form class="panel" id="joinForm" data-code="' + G.code + '" novalidate>' +
+      '<label class="field"><span>Your name</span><input id="gName" maxlength="24" autocomplete="nickname" enterkeyhint="go" value="' + esc(G.name) + '" placeholder="e.g. Priya"></label>' +
+      '<div id="gStatus">' + joinStatusHTML() + '</div>' +
+      '<button class="btn big" type="submit" id="joinBtn">Join the game</button>' +
+      '<p class="small muted">Wrong game? <a href="' + esc(baseUrl()) + '">Enter a different code</a></p>' +
+    '</form></main>';
+  const nameInput = $('#gName');
+  if (!G.name) setTimeout(() => nameInput.focus(), 50);
+  $('#joinForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name = cleanName(nameInput.value);
+    if (!name) { G.err = 'Type your name so the host knows who won.'; G.net = 'bad'; $('#gStatus').innerHTML = joinStatusHTML(); nameInput.focus(); return; }
+    G.name = name; G.err = ''; G.net = 'connecting'; gAttempts = 0;
+    guestPersist();
+    keepAwake();
+    $('#joinBtn').disabled = true; $('#joinBtn').textContent = 'Joining…';
+    $('#gStatus').innerHTML = joinStatusHTML();
+    if (gConn && gConn.open) gConn.send({ t: 'hello', v: 2, pid: G.pid, name: G.name });
+    else guestConnect();
+  });
+  guestJoinScreen();
+}
+function joinStatusHTML() {
+  if (G.net === 'bad' && G.err) return '<p class="err" role="alert">' + esc(G.err) + '</p>';
+  if (G.net === 'notfound') return '<p class="err" role="alert">Can’t find game ' + G.code.toUpperCase() + '. Check the code with the host and make sure their screen is open.</p>';
+  if (G.net === 'error') return '<p class="err" role="alert">Couldn’t connect. Check your internet and try again.</p>';
+  if (G.name && ['connecting', 'reconnecting', 'lost', 'hostgone'].includes(G.net)) return '<p class="small muted" role="status">Connecting to the host’s phone…</p>';
+  return '';
+}
+
+function guestTicketShell() {
+  app.innerHTML = '<div class="bunting" aria-hidden="true"></div><main class="wrap">' +
+    '<header class="top"><div class="brand">Jaldi <b>Five</b></div><span class="chip" id="gNet"></span></header>' +
+    '<section><p class="eyebrow" id="tMeta"></p><h1 class="h1" id="tName"></h1></section>' +
+    '<section class="strip" id="strip" aria-live="polite"></section>' +
+    '<div class="ticket" id="ticket"></div>' +
+    '<div class="t-tools"><button class="toggle-btn" type="button" id="autoDab" aria-pressed="' + G.auto + '">Auto-dab</button><span class="small muted" id="dabHint">Tap a number when it’s called</span></div>' +
+    '<section class="panel" id="tPrizes"></section>' +
+    '<details class="panel" id="tBoardWrap"><summary>All called numbers</summary><div class="board" id="tBoard"></div></details>' +
+    '<section class="panel quiet"><p class="small muted">Keep this page open during the game. If you close it, open the same link again and you’ll get your ticket back.</p>' +
+      '<button class="link-btn" type="button" id="leaveBtn">Leave this game</button></section>' +
+    '</main>';
+  $('#ticket').addEventListener('click', e => {
+    const b = e.target.closest('button[data-n]');
+    if (!b || !G.s) return;
+    const n = +b.dataset.n;
+    if (G.s.status === 'lobby') { shake(b); toast('The game hasn’t started yet'); return; }
+    const called = new Set(guestCalledForMe());
+    if (G.auto && called.has(n)) { toast('Auto-dab marks called numbers for you'); return; }
+    if (!called.has(n) && !G.marks.has(n)) { shake(b); toast(n + ' hasn’t been called yet'); return; }
+    if (G.marks.has(n)) G.marks.delete(n); else G.marks.add(n);
+    LS.set(G.markKey, [...G.marks]);
+    guestUpdateTicket();
+  });
+  $('#autoDab').addEventListener('click', e => {
+    G.auto = !G.auto; LS.set('j5-autodab', G.auto);
+    e.currentTarget.setAttribute('aria-pressed', G.auto);
+    guestUpdate(false);
+  });
+  $('#leaveBtn').addEventListener('click', e => armTwoTap(e.currentTarget, 'Tap again to leave', () => {
+    LS.del(GUEST_KEY);
+    try { if (gConn) gConn.close(); if (gPeer) gPeer.destroy(); } catch (err) {}
+    gConn = null; gPeer = null; G = null;
+    location.href = baseUrl();
+  }));
+}
+function guestMarks() {
+  const m = new Set(G.marks);
+  if (G.auto) { const called = new Set(guestCalledForMe()); ticketNums(ticketOf(G.code, G.s.round, G.no)).forEach(n => { if (called.has(n)) m.add(n); }); }
+  return m;
+}
+function guestUpdateTicket() {
+  const grid = ticketOf(G.code, G.s.round, G.no);
+  $('#ticket').innerHTML = ticketHTML(grid, { marks: guestMarks(), left: G.s.title, right: 'Ticket ' + G.no });
+  $('#tPrizes').innerHTML = '<h2>Prizes</h2>' + prizeListHTML(G.s, G.no, new Set(guestCalledForMe()));
+}
+function guestUpdate(pop) {
+  const s = G.s, me = guestMe();
+  guestRenderNet();
+  $('#tName').textContent = me ? me.name : G.name;
+  $('#tMeta').textContent = 'Ticket ' + G.no + ' · ' + s.title + ' · code ' + s.code.toUpperCase() + (s.round > 1 ? ' · round ' + s.round : '');
+  const strip = $('#strip');
+  if (s.status === 'lobby') {
+    strip.innerHTML = '<div class="strip-msg"><strong>You’re in!</strong><span class="muted">' + s.roster.length + ' player' + (s.roster.length === 1 ? '' : 's') + ' so far. The host will start soon, so keep this page open.</span></div>';
+  } else if (s.status === 'over') {
+    const fh = s.wins.find(w => w.key === 'full');
+    strip.innerHTML = '<div class="strip-msg"><strong>Game over</strong><span class="muted">' + (fh ? 'Full House: ' + esc(joinNames(fh.names)) + '. ' : '') + 'Stay here in case the host starts another round.</span></div>';
+  } else {
+    const last = s.called[s.called.length - 1];
+    const late = me && me.from > 0 ? '<span class="small muted">You joined after ' + me.from + ' numbers, so your ticket counts from then.</span>' : '';
+    strip.innerHTML = '<div class="ball sm' + (pop ? ' pop' : '') + '"><span>' + (last || '?') + '</span></div>' +
+      '<div class="grow"><p class="call">' + (last ? captionHTML(last) : '<span class="digits">First number coming up…</span>') + '</p>' +
+      '<span class="small muted">' + s.called.length + ' of 90 called</span><div class="recent">' + recentHTML(s.called, 5) + '</div>' + late + '</div>';
+  }
+  $('#autoDab').hidden = s.status === 'lobby';
+  $('#dabHint').textContent = s.status === 'lobby' ? 'This is your ticket. Numbers get dabbed as they’re called.' : (G.auto ? 'Called numbers are marked for you' : 'Tap a number when it’s called');
+  guestUpdateTicket();
+  $('#tBoard').innerHTML = boardHTML(s.called);
+  $('#tBoardWrap').hidden = !s.called.length;
+}
+
+/* ================= HOME ================= */
+function renderHome() {
+  setView('home');
+  const saved = loadHost();
+  const resume = saved && saved.status !== 'over' ? saved : null;
+  const savedGuest = LS.get(GUEST_KEY);
+  const rejoin = savedGuest && savedGuest.joined && isCode(savedGuest.code) ? savedGuest : null;
+  app.innerHTML = '<div class="bunting" aria-hidden="true"></div><main class="wrap">' +
+    '<section class="hero"><h1 class="brand xl">Jaldi <b>Five</b></h1>' +
+    '<p class="lede">Tambola for the whole party. One phone hosts and calls the numbers. Everyone else joins with a link and gets their own ticket.</p></section>' +
+    (rejoin ? '<section class="panel"><h2>Back to your game?</h2><p class="small muted">You were playing as ' + esc(rejoin.name) + ' in game ' + rejoin.code.toUpperCase() + '.</p><a class="btn" href="?g=' + rejoin.code + '">Open my ticket</a></section>' : '') +
+    '<form class="panel" id="codeForm" novalidate><h2>Join a game</h2>' +
+      '<label class="field"><span>Game code from the host’s screen</span><input id="codeIn" class="code-input" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" enterkeyhint="go" placeholder="ABCD"></label>' +
+      '<p class="err" id="codeErr" role="alert"></p>' +
+      '<button class="btn big" type="submit">Next</button></form>' +
+    '<section class="panel"><h2>Host a game</h2>' +
+      (resume ? '<p class="small muted">You have a game in progress: code ' + resume.code.toUpperCase() + ', ' + resume.roster.length + ' players, ' + resume.called.length + ' numbers called.</p><button class="btn big pink" type="button" id="resumeBtn">Resume hosting ' + resume.code.toUpperCase() + '</button>' : '') +
+      '<ol class="steps"><li><span><b>Start a game</b> on the phone everyone can hear.</span></li><li><span><b>Guests scan the QR code</b> and type their name. No app or account needed.</span></li><li><span><b>Tap Start.</b> Numbers are called out loud and every winner pops up on screen with their name.</span></li></ol>' +
+      '<button class="btn ' + (resume ? 'ghost' : 'pink big') + '" type="button" id="hostBtn">' + (resume ? 'Start a new game instead' : 'Host a game on this phone') + '</button></section>' +
+    '</main>';
+  $('#codeForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const code = cleanCode($('#codeIn').value);
+    if (!isCode(code)) { $('#codeErr').textContent = 'Game codes are 4 letters or numbers.'; return; }
+    location.href = '?g=' + code;
+  });
+  if (resume) $('#resumeBtn').addEventListener('click', () => { H = resume; startHosting(true); });
+  $('#hostBtn').addEventListener('click', e => {
+    if (resume) armTwoTap(e.currentTarget, 'Tap again: this ends game ' + resume.code.toUpperCase(), () => startHosting(false));
+    else startHosting(false);
+  });
+}
+
+/* ================= boot ================= */
+function boot() {
+  const params = new URLSearchParams(location.search);
+  const g = cleanCode(params.get('g'));
+  if (isCode(g)) {
+    setView('guest');
+    guestInit(g);
+    guestRender();
+    if (G.joined) guestConnect();
+    return;
+  }
+  renderHome();
+}
+boot();
+})();
+</script>
+</body>
+</html>
